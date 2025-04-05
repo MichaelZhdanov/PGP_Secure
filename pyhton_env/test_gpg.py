@@ -1,22 +1,23 @@
+#!/usr/bin/env python
+
 import platform
 import subprocess
 
 package_manager_commands = {
-    "apt": "sudo apt install gpg",
-    "yum": "sudo yum install gpg",
-    "dnf": "sudo dnf install gpg",
-    "pacman": "sudo pacman -S gpg",
-    "zypper": "sudo zypper install gpg",
-    "brew": "brew install gpg",
-    "port": "sudo port install gpg",
-    "choco": "choco install gpg4win",
+    "apt": "sudo apt install -y gnupg",
+    "yum": "sudo yum install -y gnupg",
+    "dnf": "sudo dnf install -y gnupg",
+    "pacman": "sudo pacman -S --noconfirm gnupg",
+    "zypper": "sudo zypper install -y gnupg",
+    "brew": "brew install gnupg",
+    "port": "sudo port install gnupg",
+    "choco": "choco install gpg4win -y",
     "scoop": "scoop install gpg4win",
-    "winget": "winget install GPG4Win"
+    "winget": "winget install --id GPG4Win.GPG4Win --silent"
 }
 
 def is_gpg_installed():
     try:
-        # Run the 'gpg --version' command to check if GPG is installed
         subprocess.run(["gpg", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
@@ -24,100 +25,56 @@ def is_gpg_installed():
 
 def get_package_manager():
     system = platform.system().lower()
-    release = platform.release().lower()
     
     if system == "linux":
-        # Check for specific package managers
-        try:
-            # Check for apt (Debian/Ubuntu)
-            subprocess.run(["apt", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            return "apt"
-        except (subprocess.CalledProcessError, FileNotFoundError):
+        for manager in ["apt", "yum", "dnf", "pacman", "zypper"]:
             try:
-                # Check for yum (RHEL/CentOS)
-                subprocess.run(["yum", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                return "yum"
+                subprocess.run([manager, "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                return manager
             except (subprocess.CalledProcessError, FileNotFoundError):
-                try:
-                    # Check for dnf (Fedora/newer RHEL)
-                    subprocess.run(["dnf", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    return "dnf"
-                except (subprocess.CalledProcessError, FileNotFoundError):
-                    try:
-                        # Check for pacman (Arch)
-                        subprocess.run(["pacman", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        return "pacman"
-                    except (subprocess.CalledProcessError, FileNotFoundError):
-                        try:
-                            # Check for zypper (openSUSE)
-                            subprocess.run(["zypper", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                            return "zypper"
-                        except (subprocess.CalledProcessError, FileNotFoundError):
-                            return "unknown (Linux)"
-    
+                continue
     elif system == "darwin":
-        # macOS - check for Homebrew or MacPorts
-        try:
-            subprocess.run(["brew", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            return "brew"
-        except (subprocess.CalledProcessError, FileNotFoundError):
+        for manager in ["brew", "port"]:
             try:
-                subprocess.run(["port", "version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                return "port"
+                subprocess.run([manager, "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                return manager
             except (subprocess.CalledProcessError, FileNotFoundError):
-                return "unknown (macOS)"
-    
+                continue
     elif system == "windows":
-        # Windows - check for Chocolatey, Scoop, or Winget
-        try:
-            subprocess.run(["choco", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            return "choco"
-        except (subprocess.CalledProcessError, FileNotFoundError):
+        for manager in ["choco", "scoop", "winget"]:
             try:
-                subprocess.run(["scoop", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-                return "scoop"
+                subprocess.run([manager, "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                return manager
             except (subprocess.CalledProcessError, FileNotFoundError):
-                try:
-                    subprocess.run(["winget", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-                    return "winget"
-                except (subprocess.CalledProcessError, FileNotFoundError):
-                    return "unknown (Windows)"
-    
-    else:
-        return "unknown (unsupported OS)"
+                continue
+    return None
 
-package_manager = get_package_manager()
-
-def install_command_lookup(package_manager, package_manager_commands):
+def install_gpg(package_manager):
     if package_manager in package_manager_commands:
-        return package_manager_commands[package_manager]
-    else:
-        print("Unsupported OS or package manager.")
-        
-def test_gpg(is_gpg_installed, package_manager):
-    if is_gpg_installed:
-        return True
-    else:
-        install_command = install_command_lookup(package_manager)
+        install_command = package_manager_commands[package_manager]
         try:
             subprocess.run(install_command, check=True, shell=True)
+            print("GPG installed successfully.")
             return True
         except subprocess.CalledProcessError:
             print("Failed to install GPG. Please install it manually.")
             print(f"Command to install GPG: {install_command}")
             return False
-        
-if __name__ == "__main__":  
+    else:
+        print("Unsupported OS or package manager.")
+        return False
+
+if __name__ == "__main__":
     if is_gpg_installed():
-        print("GPG is installed.")
+        print("GPG is already installed.")
     else:
         print("GPG is not installed.")
-    
-    package_manager = get_package_manager()
-    print(f"Detected package manager: {package_manager}")
-    
-    if test_gpg(is_gpg_installed(), package_manager):
-        print("GPG is successfully installed or already present.")
-    else:
-        print("GPG installation failed.")
-    print("Please install GPG manually.")
+        package_manager = get_package_manager()
+        if package_manager:
+            print(f"Detected package manager: {package_manager}")
+            if install_gpg(package_manager):
+                print("GPG is now installed.")
+            else:
+                print("GPG installation failed.")
+        else:
+            print("Could not detect a supported package manager. Please install GPG manually.")
