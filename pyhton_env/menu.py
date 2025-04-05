@@ -4,7 +4,10 @@ import os
 import sys
 from pathlib import Path
 
-current_dir = os.path.expanduser("~/VSCode/PGP/pyhton_env")
+def get_current_dir():
+    return str(Path(__file__).resolve().parent)
+
+current_dir = get_current_dir()
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')

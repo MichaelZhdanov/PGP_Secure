@@ -1,2 +1,3 @@
 #!/bin/bash
-python /home/mikhail-zhdanov/VSCode/PGP/pyhton_env/menu.py
+$CURRENT_DIR = pwd 
+python $CUREENT_DIR/pyhton_env/menu.py
