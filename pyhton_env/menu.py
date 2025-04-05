@@ -12,8 +12,8 @@ def show_menu():
         print("-----------------------------")
         print("  M A I N   M E N U")
         print("-----------------------------")
-        print("1) Option 1: Encrypt file")
-        print("2) Option 2: Decrypt file")
+        print("1) Option 1: Encryption")
+        print("2) Option 2: Decryption")
         print("3) Quit")
 
         try:

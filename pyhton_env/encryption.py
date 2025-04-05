@@ -73,7 +73,6 @@ def define_recipient():
 def text_encryption(recipient):
     print("Encrypting text...")
     text = str(input("Enter text to encrypt: "))
-    # encrypted_text = os.system(f"gpg --encrypt --armor --recipient {recipient}")
     os.system(f'echo "{text}" | gpg --encrypt --armor --recipient {recipient} --output encrypted_text.asc')
     encrypted_text = subprocess.check_output(f'cat encrypted_text.asc', shell=True, text=True)
     os.system('rm encrypted_text.asc')
