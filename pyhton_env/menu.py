@@ -31,9 +31,11 @@ def show_menu():
 
 def handle_choice(choice):
     if choice == 1:
-        return "encryption"
+        choice_readable = "encryption"
+        return choice_readable
     elif choice == 2:
-        return "decryption"
+        choice_readable = "decryption"
+        return choice_readable
     elif choice == 3:
         print("Exiting...")
         return "quit"
@@ -44,11 +46,11 @@ def handle_choice(choice):
 
 # Check with print
 if __name__ == "__main__":
-    choice = show_menu()
-    print(f"Selected action: {choice}")
+    choice_readable = show_menu()
+    print(f"Selected action: {choice_readable}")
     
     # Calling other scripts based on the choice
-    # if choice == "encryption":
-    #     os.system("python ./encryption.py")
-    # elif choice == "decryption":
-    #     os.system("python ./decryption.py")
+if choice_readable == "encryption":
+    os.system("python ./encryption.py")
+elif choice_readable == "decryption":
+    os.system("python ./decryption.py")
