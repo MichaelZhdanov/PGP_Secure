@@ -1,5 +1,8 @@
 import platform
 import subprocess
+import os
+
+def read_commands
 
 def is_gpg_installed():
     try:
@@ -76,36 +79,7 @@ def get_package_manager():
 package_manager = get_package_manager()
 
 def install_command_lookup(package_manager):
-    if package_manager == "apt":
-        install_command = "sudo apt install gnupg"
-        return install_command
-    elif package_manager == "yum":
-        install_command = "sudo yum install gnupg"
-        return install_command
-    elif package_manager == "dnf":
-        install_command = "sudo dnf install gnupg"
-        return install_command
-    elif package_manager == "pacman":
-        install_command = "sudo pacman -S gnupg"
-        return install_command
-    elif package_manager == "zypper":
-        install_command = "sudo zypper install gnupg"
-        return install_command
-    elif package_manager == "brew":
-        install_command = "brew install gpg"
-        return install_command
-    elif package_manager == "port":
-        install_command = "sudo port install gpg"
-        return install_command
-    elif package_manager == "choco":
-        install_command = "choco install gpg4win"
-        return install_command 
-    elif package_manager == "scoop":
-        install_command = "scoop install gpg4win"
-        return install_command
-    elif package_manager == "winget":
-        install_command = "winget install Gpg4win"
-        return install_command
+    return PACKAGE_MANAGER_COMMANDS.get(package_manager, None)
     else:
         print("Unsupported OS or package manager.")
         
