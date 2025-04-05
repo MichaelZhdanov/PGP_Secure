@@ -2,6 +2,9 @@
 
 import os
 import sys
+from pathlib import Path
+
+current_dir = os.path.expanduser("~/VSCode/PGP/pyhton_env")
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -51,6 +54,6 @@ if __name__ == "__main__":
     
     # Calling other scripts based on the choice
 if choice_readable == "encryption":
-    os.system("python ./encryption.py")
+    os.system(f"python {os.path.join(current_dir, 'encryption.py')}")
 elif choice_readable == "decryption":
-    os.system("python ./decryption.py")
+    os.system(f"python {os.path.join(current_dir, 'decryption.py')}")
