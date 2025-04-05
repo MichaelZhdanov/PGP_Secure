@@ -1,8 +1,18 @@
 import platform
 import subprocess
-import os
 
-def read_commands
+package_manager_commands = {
+    "apt": "sudo apt install gpg",
+    "yum": "sudo yum install gpg",
+    "dnf": "sudo dnf install gpg",
+    "pacman": "sudo pacman -S gpg",
+    "zypper": "sudo zypper install gpg",
+    "brew": "brew install gpg",
+    "port": "sudo port install gpg",
+    "choco": "choco install gpg4win",
+    "scoop": "scoop install gpg4win",
+    "winget": "winget install GPG4Win"
+}
 
 def is_gpg_installed():
     try:
@@ -78,8 +88,9 @@ def get_package_manager():
 
 package_manager = get_package_manager()
 
-def install_command_lookup(package_manager):
-    return PACKAGE_MANAGER_COMMANDS.get(package_manager, None)
+def install_command_lookup(package_manager, package_manager_commands):
+    if package_manager in package_manager_commands:
+        return package_manager_commands[package_manager]
     else:
         print("Unsupported OS or package manager.")
         
